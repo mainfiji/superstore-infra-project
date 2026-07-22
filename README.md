@@ -27,7 +27,7 @@
 
 ## Структура проекта
 
-- [`docs/part1_network/`](docs/part1_network/) — настройка сети (13 заданий)
+- [`/part1_network/`](/part1_network/) — настройка сети (13 заданий)
 - [`docs/part2_services/`](docs/part2_services/) — настройка сервисов Linux (5 заданий)
 - [`docs/part3_ad/`](docs/part3_ad/) — настройка Active Directory (1 задание)
 
