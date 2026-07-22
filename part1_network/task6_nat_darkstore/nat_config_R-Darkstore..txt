@@ -1,0 +1,19 @@
+interface Ethernet 0/2
+ip nat outside
+
+interface Ethernet 0/1.60
+ip nat inside
+
+interface Ethernet 0/0.30
+ip nat inside
+
+interface Ethernet 0/0.40
+ip nat inside
+exit
+
+access-list 11 permit 10.10.3.0 0.0.0.255
+access-list 11 permit 10.10.4.0 0.0.0.255
+access-list 11 permit 10.10.6.0 0.0.0.255
+access-list 11 deny any
+
+ip nat inside source list 11 interface e0/2 overload
