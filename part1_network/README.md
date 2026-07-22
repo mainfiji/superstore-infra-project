@@ -137,3 +137,26 @@
 | `show ip route` на ISP | [`show_ip_route_ISP.png`](task5_test_server/show_ip_route_ISP.png) |
 
 **Вывод:** Тестовый сервер в интернете (1.1.1.1) доступен с ISP, а ISP видит R-Darkstore. Это создаёт основу для проверки NAT в следующем задании.
+
+## Задание 6. Настройка NAT в сети даркстора
+
+**Что было сделано:**
+- На маршрутизаторе R-Darkstore настроен NAT (PAT — Port Address Translation) для всех внутренних VLAN.
+- Внутренние интерфейсы (`Ethernet0/0.30`, `Ethernet0/0.40`, `Ethernet0/1.60`) помечены как `ip nat inside`.
+- Внешний интерфейс (`Ethernet0/2` с публичным IP 55.55.55.105) помечен как `ip nat outside`.
+- Создан ACL 11, разрешающий трансляцию для подсетей:
+  - `10.10.3.0/24` (VLAN 30 — Logistics)
+  - `10.10.4.0/24` (VLAN 40 — Storage)
+  - `10.10.6.0/24` (VLAN 60 — DS-Servers)
+- Применена команда: `ip nat inside source list 11 interface Ethernet0/2 overload` — все внутренние адреса маскируются под публичный IP 55.55.55.105.
+
+**Результаты проверки:**
+
+1. **Конфигурация NAT:**
+
+| Проверка | Скриншот |
+|----------|----------|
+| Вывод `show run` с секциями `nat` и `interface` | [`show_run_nat_R-Darkstore.png`](task6_nat_darkstore/show_run_nat_R-Darkstore.png) |
+| Текстовый файл с настройками ACL и NAT | [`nat_config_R-Darkstore.txt`](task6_nat_darkstore/nat_config_R-Darkstore.txt) |
+
+**Текстовый файл конфигурации:**
