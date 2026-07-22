@@ -160,3 +160,34 @@
 | Текстовый файл с настройками ACL и NAT | [`nat_config_R-Darkstore.txt`](task6_nat_darkstore/nat_config_R-Darkstore.txt) |
 
 **Текстовый файл конфигурации:**
+
+## Задание 7. Настройка VLAN в головном офисе
+
+**Что было сделано:**
+- На коммутаторах SW1-HQ и SW2-HQ созданы VLAN:
+  - VLAN 10 — IT (подсеть 10.10.1.0/24)
+  - VLAN 20 — Management (подсеть 10.10.2.0/24)
+  - VLAN 50 — HQ-Servers (подсеть 10.10.5.0/24)
+- Пользовательские порты переведены в режим access с соответствующими VLAN.
+- Все соединения между коммутаторами и маршрутизатором R-HQ настроены как trunk-порты с разрешёнными VLAN 10, 20, 50.
+- Клиентским устройствам временно назначены статические IP-адреса для проверки связности до настройки DHCP.
+
+**Результаты проверки:**
+
+Связность между устройствами в пределах одного VLAN проверена с помощью `ping`. Все пинги успешны, что подтверждает корректную работу VLAN и trunk-портов.
+
+| Проверяемая пара | VLAN | Скриншот |
+|------------------|------|----------|
+| PCI-1 → PCI-2 | VLAN 10 (IT) | [`ping_PCI-1_to_PCI-2.png`](task7_vlan_hq/ping_PCI-1_to_PCI-2.png) |
+| PCI-2 → PCI-1 (обратный) | VLAN 10 (IT) | [`ping_PCI-2_to_PCI-1.png`](task7_vlan_hq/ping_PCI-2_to_PCI-1.png) |
+| PCM-1 → PCM-2 | VLAN 20 (Management) | [`ping_PCM-1_to_PCM-2.png`](task7_vlan_hq/ping_PCM-1_to_PCM-2.png) |
+| PCM-2 → PCM-1 (обратный) | VLAN 20 (Management) | [`ping_PCM-2_to_PCM-1.png`](task7_vlan_hq/ping_PCM-2_to_PCM-1.png) |
+| FS → Mail | VLAN 50 (HQ-Servers) | [`ping_FS_to_Mail.png`](task7_vlan_hq/ping_FS_to_Mail.png) |
+| Mail → FS (обратный) | VLAN 50 (HQ-Servers) | [`ping_Mail_to_FS.png`](task7_vlan_hq/ping_Mail_to_FS.png) |
+
+**Детали:**
+- PCI-1: 10.10.1.1/24, PCI-2: 10.10.1.2/24 — пинги с TTL=64 (без маршрутизации).
+- PCM-1: 10.10.2.1/24, PCM-2: 10.10.2.2/24 — пинги с TTL=64.
+- FS: 10.10.5.4/24, Mail: 10.10.5.5/24 — пинги с TTL=64.
+
+**Вывод:** Настройка VLAN и trunk-соединений в головном офисе выполнена корректно. Устройства внутри каждой VLAN видят друг друга, что является основой для дальнейшей настройки маршрутизации и NAT.
