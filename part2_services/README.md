@@ -118,3 +118,61 @@
 - `timedatectl` показывает `System clock synchronized: yes` и временную зону Москва (MSK, +0300).
 
 **Вывод:** Ansible настроен корректно. Пользователи созданы, бэкапы регулярно создаются и доставляются на сервер, клиент использует правильные DNS и NTP. Задание выполнено.
+
+## Задание 3. Конфигурация почтового сервера (Postfix)
+
+**Что было сделано:**
+- На **Хосте 1** установлен Postfix, настроен как почтовый сервер.
+- В `dnsmasq.conf` добавлена MX-запись: `mx-host=practicumsuperstore.ru,mail.practicumsuperstore.ru,10`.
+- A-запись для `mail.practicumsuperstore.ru` указывает на IP-адрес Хоста 1 (10.10.1.86).
+- В конфигурации Postfix (`/etc/postfix/main.cf`) заданы `myhostname = mail.practicumsuperstore.ru`, `mydomain = practicumsuperstore.ru`, `myorigin = $mydomain`.
+- Создан тестовый пользователь `ubuntu` (существовал ранее).
+- На **Хосте 3** (почтовый клиент) установлен `mailutils`, с него отправлено тестовое письмо пользователю `ubuntu@mail.practicumsuperstore.ru`.
+- Запущен скрипт `script.sh`, который отправляет письмо с большим текстовым файлом, содержащим имя и фамилию.
+
+**Результаты проверки:**
+
+1. **Конфигурация DNS (MX-запись):**
+
+| Проверка | Скриншот |
+|----------|----------|
+| Файл `/etc/dnsmasq.conf` с MX-записью | [`host1_dnsmasq_mx.png`](task3_mail/host1_dnsmasq_mx.png) |
+
+В конфигурации присутствует строка:  
+`mx-host=practicumsuperstore.ru,mail.practicumsuperstore.ru,10`
+
+2. **Проверка MX и A-записей с Хоста 3:**
+
+| Проверка | Скриншот |
+|----------|----------|
+| `nslookup -type=mx mail.practicumsuperstore.ru` и `nslookup mail.practicumsuperstore.ru` | [`host3_nslookup_mx.png`](task3_mail/host3_nslookup_mx.png) |
+
+Видно, что MX-запись указывает на `mail.practicumsuperstore.ru`, а A-запись даёт IP 10.10.1.86.
+
+3. **Лог почтового сервера (доставка писем):**
+
+| Проверка | Скриншот |
+|----------|----------|
+| `tail -n 10 /var/log/mail.log` на Хосте 1 | [`host1_tail_mail_log.png`](task3_mail/host1_tail_mail_log.png) |
+
+В логе видны записи:
+- `status=sent (delivered to maildir)` — письма успешно доставлены.
+- Входящие письма от `ubuntu@mailclient` (Хост 3) к `ubuntu@practicumsuperstore.ru` (Хост 1).
+
+4. **Наличие писем в Maildir:**
+
+| Проверка | Скриншот |
+|----------|----------|
+| `ls -la /home/ubuntu/Maildir/new` на Хосте 1 | [`host1_ls_maildir_new.png`](task3_mail/host1_ls_maildir_new.png) |
+
+В директории есть несколько файлов писем, включая те, что пришли от клиента.
+
+5. **Содержимое письма (проверка имени и фамилии):**
+
+| Проверка | Скриншот |
+|----------|----------|
+| Просмотр письма через `less` | [`host1_less_email_content.png`](task3_mail/host1_less_email_content.png) |
+
+В заголовке письма видна тема: `Subject: Size check [Савкин Илья]`, а также имя в теле письма и в имени вложения (`large_text_Савкин Илья.txt`). Это подтверждает успешное выполнение скрипта.
+
+**Вывод:** Почтовый сервер Postfix настроен корректно. DNS-записи (MX и A) работают, письма доставляются в Maildir, скрипт успешно отправляет письмо с именем. Задание выполнено.
