@@ -30,8 +30,6 @@
 - [`docs/part1_network/`](docs/part1_network/) — настройка сети (13 заданий)
 - [`docs/part2_services/`](docs/part2_services/) — настройка сервисов Linux (5 заданий)
 - [`docs/part3_ad/`](docs/part3_ad/) — настройка Active Directory (1 задание)
-- [`configs/`](configs/) — конфигурационные файлы устройств и сервисов
-- [`topology/`](topology/) — схема сети (EVE‑NG)
 
 ---
 
